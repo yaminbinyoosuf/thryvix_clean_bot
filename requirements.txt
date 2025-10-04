@@ -2,7 +2,7 @@ Flask==3.0.0
 twilio==9.0.5
 gunicorn==22.0.0
 openai==1.51.2
-psycopg2-binary==2.9.9  # Replace psycopg[binary] with psycopg2-binary
+psycopg[binary]
 requests==2.32.3
 gspread==6.1.2
 oauth2client==4.1.3
