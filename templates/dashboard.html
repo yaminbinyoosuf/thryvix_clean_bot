@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>📊 Thryvix Leads Dashboard</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <header>
+    <h1>📊 Thryvix Leads Dashboard</h1>
+    <a href="/logout" class="logout-btn">Logout</a>
+  </header>
+
+  <section class="stats">
+    <div class="stat-card">
+      <h2>Total Leads</h2>
+      <p>{{ leads|length }}</p>
+    </div>
+    <div class="stat-card">
+      <h2>Hot Leads</h2>
+      <p>{{ leads | selectattr('score', '>=', 70) | list | length }}</p>
+    </div>
+    <div class="stat-card">
+      <h2>Average Score</h2>
+      <p>
+        {% set total = 0 %}
+        {% for lead in leads %}
+          {% set total = total + (lead.score or 0) %}
+        {% endfor %}
+        {% if leads|length > 0 %}
+          {{ (total / leads|length) | round(1) }}
+        {% else %}
+          0
+        {% endif %}
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <table>
+      <thead>
+        <tr>
+          <th>Phone</th>
+          <th>Language</th>
+          <th>Business Type</th>
+          <th>City</th>
+          <th>Score</th>
+          <th>Created</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for lead in leads %}
+          <tr class="{% if lead.score >= 70 %}hot{% elif lead.score >= 40 %}warm{% else %}cold{% endif %}">
+            <td>{{ lead.wa_from }}</td>
+            <td>{{ lead.language or '-' }}</td>
+            <td>{{ lead.business_type or '-' }}</td>
+            <td>{{ lead.city or '-' }}</td>
+            <td>{{ lead.score or 0 }}</td>
+            <td>{{ lead.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+
+  <footer>
+    <p>© {{ datetime.utcnow().year }} Thryvix AI — All rights reserved.</p>
+  </footer>
+</body>
+</html>
