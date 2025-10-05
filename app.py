@@ -5,7 +5,7 @@ from datetime import datetime
 from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
 import openai
-import psycopg2 as psycopg
+import psycopg2
 from psycopg2.extras import RealDictCursor
 import requests
 import gspread
