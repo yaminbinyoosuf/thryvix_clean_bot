@@ -197,19 +197,40 @@ def whatsapp_webhook():
         if not incoming_msg:
             return str(MessagingResponse())
 
-        # Generate AI reply + process lead
-        ai_reply = process_new_lead(from_number, incoming_msg)
+        # ✅ Use the new OpenAI API client
+        import openai
+        openai.api_key = os.getenv("OPENAI_API_KEY")
 
-        # Build WhatsApp response
-        resp = MessagingResponse()
-        msg = resp.message()
-        msg.body(ai_reply)
-        return str(resp)
+        # AI-powered reply
+        response = openai.chat.completions.create(
+            model="gpt-4",
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "You are Thryvix AI Lead Agent. Start every chat with a warm welcome. "
+                        "Guide the user naturally to share their name, business type, and goal. "
+                        "Respond in the same language they use (English, Malayalam, or Manglish)."
+                    )
+                },
+                {"role": "user", "content": incoming_msg}
+            ]
+        )
+
+        ai_reply = response.choices[0].message.content.strip()
+
+        # ✅ Build WhatsApp response
+        twilio_response = MessagingResponse()
+        twilio_response.message(ai_reply)
+
+        return str(twilio_response)
 
     except Exception as e:
         print("❌ WhatsApp webhook error:", e)
         traceback.print_exc()
-        return str(MessagingResponse())
+        error_response = MessagingResponse()
+        error_response.message("⚠️ Sorry, something went wrong. Please try again.")
+        return str(error_response)
 
 # -------------------- FOLLOW-UP LOGIC --------------------
 def schedule_follow_up(phone, message):
