@@ -23,6 +23,7 @@ app.secret_key = os.getenv("FLASK_SECRET", "supersecretkey")
 # OpenAI
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
+
 # Telegram
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN", "8343593934:AAFtczpvRvZc_c-4JwQFVcTxSJFEKSag3K8")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "1129466669")
@@ -139,7 +140,8 @@ def generate_ai_reply(user_message, language="English"):
             "Be polite and never end abruptly."
         )
 
-        completion = client.chat.completions.create(
+        completion = openai.chat.completions.create(
+
             model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": system_prompt},
